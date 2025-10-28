@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pertanyaan Penting! 💖</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" id="main-container">
+        <div id="initial-view">
+            <h1>Halo Sayang!</h1>
+            <p>Ada yang ingin aku tanyakan...</p>
+            <button id="show-question-btn" class="cute-btn">Klik untuk lihat 👉</button>
+        </div>
+
+        <div id="question-view" class="hidden">
+            <h2>Maukah kamu jadi pacarku?</h2>
+            
+            <div id="button-area">
+                <button id="yes-btn" class="cute-btn answer-btn">Iyaaaa! 🎉</button>
+                
+                <button id="no-btn" class="cute-btn answer-btn">Gak dulu.. 🥺</button>
+            </div>
+            
+            <p id="message" class="hidden"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const showQuestionBtn = document.getElementById('show-question-btn');
+    const initialView = document.getElementById('initial-view');
+    const questionView = document.getElementById('question-view');
+    
+    const yesBtn = document.getElementById('yes-btn');
+    const noBtn = document.getElementById('no-btn');
+    const message = document.getElementById('message');
+    const buttonArea = document.getElementById('button-area');
+
+    // Tampilkan tampilan pertanyaan saat tombol awal diklik
+    showQuestionBtn.addEventListener('click', () => {
+        initialView.classList.add('hidden');
+        questionView.classList.remove('hidden');
+    });
+
+    // === Logika Tombol "Gak dulu.." (Menghindar) ===
+    
+    // Fungsi untuk mendapatkan posisi acak
+    function getRandomPosition() {
+        // Mendapatkan ukuran area tombol
+        const areaRect = buttonArea.getBoundingClientRect();
+        
+        // Ukuran Tombol 'No' (asumsi 100x40px, bisa disesuaikan dengan padding/margin)
+        const btnWidth = noBtn.offsetWidth; 
+        const btnHeight = noBtn.offsetHeight;
+
+        // Batas aman untuk tombol 'No' agar tidak keluar dari 'button-area'
+        // dan yang PENTING: tidak menutupi tombol 'Iyaaa!'
+        // Tombol 'Iyaaa' posisinya di KIRI. Kita batasi pergerakan di sisi KANAN.
+        
+        // Batas Kiri (minimum dari 50% lebar area, agar tidak menutupi tombol 'Iyaaa!')
+        const minX = areaRect.width / 2;
+        // Batas Kanan (maksimum)
+        const maxX = areaRect.width - btnWidth; 
+
+        // Batas Atas (minimum 0)
+        const minY = 0;
+        // Batas Bawah (maksimum)
+        const maxY = areaRect.height - btnHeight;
+
+        // Hitung posisi acak
+        const randomX = Math.random() * (maxX - minX) + minX;
+        const randomY = Math.random() * (maxY - minY) + minY;
+
+        return { x: randomX, y: randomY };
+    }
+
+    // Event listener saat kursor diarahkan ke tombol "Gak dulu.."
+    noBtn.addEventListener('mouseover', () => {
+        const newPos = getRandomPosition();
+        
+        // Terapkan posisi baru menggunakan transform (lebih smooth dari top/left)
+        // Transform didasarkan pada posisi awal (relatif ke 'button-area')
+        noBtn.style.transform = `translate(${newPos.x - noBtn.offsetLeft}px, ${newPos.y - noBtn.offsetTop}px)`;
+        noBtn.style.right = 'auto'; // Reset properti 'right'
+        noBtn.style.left = 'auto'; // Reset properti 'left'
+    });
+
+    // === Logika Tombol "Iyaaa!" (Jawaban Diterima) ===
+    yesBtn.addEventListener('click', () => {
+        // Sembunyikan tombol
+        yesBtn.classList.add('hidden');
+        noBtn.classList.add('hidden');
+        
+        // Tampilkan pesan
+        message.classList.remove('hidden');
+        message.innerHTML = '❤️❤️❤️ YESS! Aku senang sekali! Aku Cinta Kamu! 🥰';
+        
+        // Ubah warna container
+        document.getElementById('main-container').style.backgroundColor = '#d4edda'; // Hijau muda
+        document.getElementById('main-container').style.borderColor = 'green';
+    });
+});
+</script>
+</html>
